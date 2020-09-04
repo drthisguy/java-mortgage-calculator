@@ -2,34 +2,22 @@ package com.drthisguy;
 
 
 public class Mortgage {
-    final static byte MONTHS_PER_YEAR = 12;
-    final static byte PERCENT = 100;
-    private double principal;
-    private float annualInterest;
-    private byte numberOfYears;
+    private final static byte MONTHS_PER_YEAR = 12;
+    private final static byte PERCENT = 100;
+
+    private final double principal;
+    private final float annualInterest;
+    private final byte numberOfYears;
 
     public Mortgage(double principal, float annualInterest, byte numberOfYears) {
-        setPrincipal(principal);
-        setAnnualInterest(annualInterest);
-        setNumberOfYears(numberOfYears);
-    }
-
-    private void setPrincipal(double principal) {
         this.principal = principal;
-    }
-
-    private void setAnnualInterest(float annualInterest) {
         this.annualInterest = annualInterest;
-    }
-
-    private void setNumberOfYears(byte numberOfYears) {
         this.numberOfYears = numberOfYears;
     }
 
     public double calculateMortgage() {
-
-        float monthlyInterest = annualInterest / PERCENT / MONTHS_PER_YEAR; //duplicated lines kept for re-usability purposes.
-        short numberOfPayments =(short)(numberOfYears * MONTHS_PER_YEAR);
+        float monthlyInterest = getMonthlyInterest(); //duplicated lines kept for re-usability purposes.
+        short numberOfPayments = getNumberOfPayments();
 
         return principal
                 * (monthlyInterest * Math.pow(1 + monthlyInterest, numberOfPayments))
@@ -37,16 +25,27 @@ public class Mortgage {
     }
 
     public double calculateBalance(int numberOfPaymentsMade) {
-
-        float monthlyInterest = annualInterest / PERCENT / MONTHS_PER_YEAR;
-        short numberOfPayments =(short)(numberOfYears * MONTHS_PER_YEAR);
+        float monthlyInterest = getMonthlyInterest();
+        short numberOfPayments = getNumberOfPayments();
 
         return principal
                 * (Math.pow(1 + monthlyInterest, numberOfPayments) - Math.pow(1 + monthlyInterest, numberOfPaymentsMade))
                 / (Math.pow(1 + monthlyInterest, numberOfPayments) - 1);
     }
 
-    public short getYears() {
-        return numberOfYears;
+    public double[] getRemainingBalances() {
+        var balances = new double[getNumberOfPayments()];
+        for (short month = 1; month <= balances.length; month++)
+            balances[month -1] = calculateBalance(month);
+
+        return balances;
+    }
+
+    private float getMonthlyInterest() {
+        return annualInterest / PERCENT / MONTHS_PER_YEAR;
+    }
+
+    private short getNumberOfPayments() {
+        return (short) (numberOfYears * MONTHS_PER_YEAR);
     }
 }

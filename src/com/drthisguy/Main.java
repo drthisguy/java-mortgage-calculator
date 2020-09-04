@@ -9,6 +9,7 @@ public class Main {
         byte years = (byte) Console.readInValues("Period (Years): ", 1, 30);
 
         var calculator = new Mortgage(principal, annualInterest, years);
+
         var report =  new MortgageReport(calculator);
         report.printMortgage();
         report.printPaymentSchedule();
